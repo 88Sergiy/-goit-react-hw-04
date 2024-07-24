@@ -1,101 +1,78 @@
-import { useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { Grid as GridLoader } from 'react-loader-spinner';
-import ReactModal from 'react-modal';
+import React, { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
+import SearchBar from '../src/components/SearchBar/SearchBar';
+import ImageGallery from '../src/components/ImageGallery/ImageGallery';
+import Loader from '../src/components/Loader/Loader';
+import ErrorMessage from '../src/components/ErrorMessage/ErrorMessage';
+import LoadMoreBtn from '../src/components/LoadMoreBtn/LoadMoreBtn';
+import ImageModal from '../src/components/ImageModal/ImageModal';
+import './App.css';
+import axios from 'axios';
 
-import { fetchPhotos } from './api/unsplash-api';
+const API_KEY = 'QxwtyiynyLrOT1cpYeYexFds8RMCeu7pxWoIvifoCIY';
+const BASE_URL = 'https://api.unsplash.com';
 
-import SearchBar from './components/SearchBar/SearchBar';
-import ImageGallery from './components/ImageGallery/ImageGallery';
-import ErrorMessage from './components/ErrorMessage/ErrorMessage';
-import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
-import ImageModal from './components/ImageModal/ImageModal';
-
-ReactModal.setAppElement('#root');
-
-function App() {
-  const [photos, setPhotos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const [showModal, setShowModal] = useState({ isOpen: false, photo: null });
-
-  const [query, setQuery] = useState(null);
+const App = () => {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
-
-  function updateQuery(string) {
-    setPage(1);
-    setQuery(string);
-  }
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalImage, setModalImage] = useState(null);
 
   useEffect(() => {
-    makeRequest(query, page);
+    if (!query) return;
+    const fetchImages = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get(`${BASE_URL}/search/photos`, {
+          params: {
+            query,
+            page,
+            per_page: 16,
+            client_id: API_KEY
+          },
+        });
+        setImages(prevImage => [...prevImage, ...response.data.results]);
+      } catch (error) {
+        setError('Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchImages();
   }, [query, page]);
 
-  function makeRequest(query, page) {
-    if (query) {
-      setLoading(true);
-      setError(false);
+  const handleSearchSubmit = newQuery => {
+    if (newQuery === query) return;
+    setQuery(newQuery);
+    setImages([]);
+    setPage(1);
+  };
 
-      fetchPhotos(query, page)
-        .then(data => {
-          if (data.length === 0) {
-            return toast.error('No results for your query!', {
-              duration: 3500,
-              position: 'top-right',
-            });
-          }
+  const openModal = image => {
+    setModalImage(image);
+    setShowModal(true);
+  };
 
-          if (page > 1) {
-            setPhotos(prevPhotos => [...prevPhotos, ...data]);
-          } else {
-            setPhotos(data);
-          }
-        })
-        .catch(e => {
-          setError(true);
-
-          toast.error(e.message, {
-            duration: 3000,
-            position: 'top-right',
-          });
-        })
-        .finally(() => setLoading(false));
-    }
-  }
-
-  function openImage(photo) {
-    setShowModal({ isOpen: true, photo });
-  }
-
-  function closeImage() {
-    setShowModal({ isOpen: false, photo: null });
-  }
+  const closeModal = () => {
+    setShowModal(false);
+    setModalImage(null);
+  };
 
   return (
-    <>
-      <SearchBar onSubmit={updateQuery} />
-      {/* {error && <ErrorMessage />}
-      {photos.length > 0 && !error && (
-        <ImageGallery photos={photos} onOpen={openImage} />
-      )}
-      <GridLoader
-        visible={loading}
-        height="130"
-        width="130"
-        color="#ffb6c1"
-        ariaLabel="grid-loading"
-        radius="12"
-        wrapperStyle={{}}
-        wrapperClass="load-wrapper"
-      />
-      {photos.length > 0 && !error && (
-        <LoadMoreBtn onLoading={loading} setPage={setPage} />
-      )}
+    <div className='div'>
+      <SearchBar onSubmit={handleSearchSubmit} />
+      {loading && <Loader />}
+      {error && <ErrorMessage message={error} />}
+      <ImageGallery images={images} onImageClick={openModal} />
+      {images.length > 0 && !loading && <LoadMoreBtn onClick={() => setPage(prevPage => prevPage + 1)} />}
+      {showModal && <ImageModal isOpen={showModal} onRequestClose={closeModal} image={modalImage} />}
       <Toaster />
-      <ImageModal showModal={showModal} closeModal={closeImage} /> */}
-    </>
+    </div>
   );
-}
+};
 
 export default App;

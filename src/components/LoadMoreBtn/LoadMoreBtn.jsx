@@ -1,24 +1,13 @@
-import PropTypes from 'prop-types';
+import css from './LoadMoreBtn.module.css'
 
-import styles from './LoadMoreBtn.module.css';
 
-function LoadMoreBtn({ onLoading, setPage }) {
-    return (
-        <button
-            type="button"
-            className={styles.btn}
-            onClik={() => setPage(prevPage => prevPage + 1)}
-            disabled={onLoading}
-        >
-            Load more
-        </button>
-    );
-}
+const LoadMoreBtn = ({ onClick }) => (
+  <button
+    type='button'
+    onClick={onClick}
+    className={css.btn}>
+    Load more...
+  </button>
+)
 
-LoadMoreBtn.PropTypes = {
-    onLoadMore: PropTypes.func,
-    onLoadding: PropTypes.bool,
-    setPage: PropTypes.func,
-};
-
-export default LoadMoreBtn;
+export default LoadMoreBtn

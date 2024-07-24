@@ -1,35 +1,26 @@
-import ReactModal from 'react-modal';
-import PropTypes from 'prop-types';
-import { HiXMark } from 'react-icons/hi2';
-import ImageCard from '../ImageCard/ImageCard';
+import css from './ImageModal.module.css'
+import Modal from 'react-modal'
 
-import './ImageModal.css';
+Modal.setAppElement('#root');
 
-function ImageModal({ showModal, closeModal }) {
-    return (
-        <ReactModal
-            isOpen={showModal.isOpen}
-            contentLabel="Minimal Modal Example"
-            shouldCloseOnOverLayClick={true}
-            on RequestClose={closeModal}
-            className={'modal'}
-            overlayClassName={'overlay'}
-            closeTimeoutMs={150}
-        >
-            <HiXMark
-                title='Icon for close image'
-                size={40}
-                color='white'
-                onClick={closeModal}
-            />
-            {showModal.photo && <ImageCard photo={showModal.photo} modal={true} />}
-        </ReactModal>
-    );
+const ImageModal = ({ isOpen, onRequestClose, image }) => {
+  if (!image) return null;
+  return (
+    <div className={css.div}>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      className={css.modal}
+      overlayClassName={css.overlay}>
+      <p>{image.description || image.alt_description}</p>
+      <img
+        src={image.urls.regular}
+        alt={image.alt_description}
+      />
+      <button className={css.btn} onClick={onRequestClose}>X</button>
+      </Modal>
+      </div>
+  )
 }
 
-ImageModal.propTypes = {
-    showModal: PropTypes.object,
-    closeModal: PropTypes.func,
-};
-
-export default ImageModal;
+export default ImageModal

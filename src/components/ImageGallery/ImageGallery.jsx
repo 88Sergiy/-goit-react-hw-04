@@ -1,23 +1,19 @@
-import PropTypes, { object } from 'prop-types';
+import css from './ImageGallery.module.css'
+import ImageCard from '../ImageCard/ImageCard'
 
-import styles from './ImageGallery.module.css';
-import ImageCard from '../ImageCard/ImageCard';
+const ImageGallery = ({images, onImageClick}) => {
+  return (
+    <ul className={css.ul}>
+      {images.map(image => (
+        <li
+          key={image.id}
+          className={css.li}>
+          <ImageCard image={image} onClick={() => onImageClick(image)} />
+	</li>
+      ))}
 
-function ImageGallery({ photos, onOpen }) {
-    return (
-        <ul className={styles.ul}>
-            {photos.map(photo => (
-                <li key={photo.id} className={styles.li}>
-                    <ImageCard photo={photo} modal={false} onOpen={onOpen} />
-                </li>
-            ))}
-        </ul>
-    );
+</ul>
+  )
 }
 
-ImageGallery.propTypes = {
-    photos: PropTypes.arrayOf(object),
-    onOpen: PropTypes.func,
-};
-
-export default ImageGallery;
+export default ImageGallery

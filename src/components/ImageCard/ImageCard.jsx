@@ -1,29 +1,20 @@
-import PropTypes from 'prop-types';
-import styles from './ImageCard.module.css';
+import css from './ImageCard.module.css'
 
-function ImageCard({ photo, modal, onOpen }) {
-  function clickHandler() {
-    if (!modal) {
-      onOpen(photo);
-    }
-  }
 
+const ImageCard = ({ image, onClick }) => {
+  const { urls, alt_description } = image;
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={css.div}
+    onClick={onClick}
+    >
       <img
-        className={styles.img}
-        src={modal ? photo.fullImg : photo.thumbImg}
-        alt={photo.alt}
-        onClick={clickHandler}
+        className={css.img}
+        src={urls.small}
+        alt={alt_description}
       />
     </div>
-  );
+  )
 }
 
-ImageCard.propTypes = {
-  photo: PropTypes.object,
-  modal: PropTypes.bool,
-  onOpen: PropTypes.func,
-};
-
-export default ImageCard;
+export default ImageCard

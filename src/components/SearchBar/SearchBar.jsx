@@ -1,44 +1,44 @@
-import styles from './SearchBar.module.css';
-import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import toast from 'react-hot-toast'
+import css from './SearchBar.module.css'
 
-function SearchBar({ onSubmit }) {
-  function submitHandler(e) {
-    e.preventDefault();
-    const { search } = e.target.elements;
 
-    const searchString = search.value.trim();
+const SearchBar = ({ onSubmit }) => {
+  const [query, setQuery] = useState('');
+  const handleInputChange = evt => {
+    setQuery(evt.target.value)
+  };
 
-    if (!searchString) {
-      return toast('Your query shouldn`t be empty', {
-        duration: 3000,
-        position: 'top-right',
-        icon: '⚠️',
-      });
+  const handleSubmit = evt => {
+    evt.preventDefault();
+    if (query.trim() === '') {
+      toast.error('Please enter a search query');
+      return;
     }
-
-    onSubmit(searchString);
+    onSubmit(query);
+    setQuery('');
   }
-    return (
-    <header className={styles.header}>
-      <form onSubmit={submitHandler} className={styles.form}>
-        <input
-          className={styles.input}
+  return (
+    <div className={css.div}>
+      <form
+        className={css.form}
+      onSubmit={handleSubmit}
+      >
+    < input
+          className={css.input}
+          placeholder='Search...'
           type="text"
-          autoComplete="off"
-          autoFocus
-          placeholder="Search images and photos"
-          name="search"
+          value={query}
+          onChange={handleInputChange}
         />
-        <button className={styles.btn} type="submit">
+        <button
+          type="submit"
+          className={css.btn}>
           Search
         </button>
       </form>
-    </header>
-  );
+    </div>
+  )
 }
 
-SearchBar.propTypes = {
-  onSubmit: PropTypes.func,
-};
-export default SearchBar;
+export default SearchBar

@@ -1,22 +1,28 @@
 .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
     color: white;
     margin: 0 auto;
-    margin-bottom: 50px;
-    border: none;
-    border-radius: 5 px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 
-    padding: 10px 20px;
-    background-color: #ff758e;
-
-    transition: background-color 100ms linear;
 }
 
 .btn:hover {
-    cursor: pointer;
-    background-color: rgb(255, 49, 87);
+    border-color: #646cff;
 }
 
-.btn:disabled {
-    cursor: default;
-    background-color: lightgray;
+.btn:focus {
+    outline: 4px auto -webkit-focus-ring-color;
 }
